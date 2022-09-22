@@ -1,0 +1,769 @@
+-- Ion Apelia Cosmina 231
+
+
+/*
+DROP SEQUENCE secventa;
+
+DROP TABLE CLADIRE;
+DROP TABLE DEPARTAMENT;
+DROP TABLE ETAJ;
+DROP TABLE SALA;
+
+DROP TABLE ANGAJAT;
+DROP TABLE JOB;
+DROP TABLE DIAGNOSTIC;
+DROP TABLE IMPLICA;
+DROP TABLE TRATAMENT;
+DROP TABLE PACIENT;
+
+
+ALTER TABLE DEPARTAMENT
+drop CONSTRAINT leg_cladire_dept;
+ALTER TABLE ETAJ
+DROP CONSTRAINT leg_dept_etaj;
+ALTER TABLE SALA
+DROP CONSTRAINT leg_etaj_sala
+FOREIGN KEY (id_etaj) REFERENCES ETAJ (id_etaj) ON DELETE SET NULL;
+TABLE ANGAJAT
+DROP CONSTRAINT leg_dept_angajat ;
+ALTER TABLE DEPARTAMENT
+DROP CONSTRAINT leg_angajat_dept ; 
+ALTER TABLE Angajat
+DROP CONSTRAINT leg_angajat_job;
+ALTER TABLE Diagnostic
+DROP CONSTRAINT leg_angajat_diagnostic;
+*/
+--Cladire----------------------------------------------------------------------
+CREATE TABLE CLADIRE (
+id_cladire VARCHAR(5) PRIMARY KEY,
+nr_de_etaje NUMBER(2),
+adresa VARCHAR(25)
+);
+
+INSERT INTO CLADIRE (ID_CLADIRE, NR_DE_ETAJE, ADRESA) 
+VALUES ('A1', 3, ' Floreasca, 5');
+INSERT INTO CLADIRE (ID_CLADIRE, NR_DE_ETAJE, ADRESA) 
+VALUES ('A2', 2, 'Floreasca, 7');
+INSERT INTO CLADIRE (ID_CLADIRE, NR_DE_ETAJE, ADRESA) 
+VALUES ('A3', 1, 'Floreasca, 11');
+INSERT INTO CLADIRE (ID_CLADIRE, NR_DE_ETAJE, ADRESA) 
+VALUES ('B1', 3, 'Floreasca, 9');
+INSERT INTO CLADIRE (ID_CLADIRE, NR_DE_ETAJE, ADRESA) 
+VALUES ('C1', 3, 'Floreasca, 12');
+
+--Departament---------------------------------------------------------------------
+CREATE TABLE DEPARTAMENT (
+id_dept VARCHAR(5) PRIMARY KEY,
+id_cladire VARCHAR(5),
+id_etaj varchar(5),
+id_angajat number(5),
+manager_id number(5),
+dept_descr VARCHAR(20)
+);
+
+INSERT INTO DEPARTAMENT (ID_DEPT, ID_CLADIRE, ID_ETAJ, MANAGER_ID, DEPT_DESCR) 
+VALUES ('U', 'A1', 'A1_1', 1, 'Urgente');
+INSERT INTO DEPARTAMENT (ID_DEPT, ID_CLADIRE, ID_ETAJ, MANAGER_ID, DEPT_DESCR) 
+VALUES ('ATI', 'A1', 'A1_2', 12, 'Terapie intensiva');
+INSERT INTO DEPARTAMENT (ID_DEPT, ID_CLADIRE, ID_ETAJ, MANAGER_ID, DEPT_DESCR) 
+VALUES ('MI', 'A1', 'A1_3', 5, 'Medicina interna');
+INSERT INTO DEPARTAMENT (ID_DEPT, ID_CLADIRE, ID_ETAJ, MANAGER_ID, DEPT_DESCR) 
+VALUES ('OFT', 'A2', 'A2_1', 6, 'Oftalmologie');
+INSERT INTO DEPARTAMENT (ID_DEPT, ID_CLADIRE, ID_ETAJ, MANAGER_ID, DEPT_DESCR) 
+VALUES ('DERM', 'A2', 'A2_2', 10, 'Dermatologie');
+INSERT INTO DEPARTAMENT (ID_DEPT, ID_CLADIRE, ID_ETAJ, MANAGER_ID, DEPT_DESCR) 
+VALUES ('NEF', 'B1', 'B3_1', 8, 'Nefrologie');
+
+--Etaj----------------------------------------------------------------------------
+CREATE TABLE ETAJ (
+id_etaj varchar(5) PRIMARY KEY,
+id_dept VARCHAR(5),
+tip_acces VARCHAR(10),
+nr_sali NUMBER (2)
+);
+
+INSERT INTO ETAJ (ID_ETAJ, ID_DEPT, TIP_ACCES, NR_SALI) 
+VALUES ('A1_1', 'U', 'general', 5);
+INSERT INTO ETAJ (ID_ETAJ, ID_DEPT, TIP_ACCES, NR_SALI) 
+VALUES ('A1_2', 'ATI', 'angajati', 7);
+INSERT INTO ETAJ (ID_ETAJ, ID_DEPT, TIP_ACCES, NR_SALI) 
+VALUES ('A1_3', 'MI', 'angajati', 4);
+INSERT INTO ETAJ (ID_ETAJ, ID_DEPT, TIP_ACCES, NR_SALI) 
+VALUES ('A2_1', 'OFT', 'general', 2);
+INSERT INTO ETAJ (ID_ETAJ, ID_DEPT, TIP_ACCES, NR_SALI) 
+VALUES ('A2_2', 'DERM', 'general', 2);
+INSERT INTO ETAJ (ID_ETAJ, ID_DEPT, TIP_ACCES, NR_SALI) 
+VALUES ('B1_1', 'NEF', 'general', 6);
+
+--SALA-----------------------------------------------------------------------------
+CREATE TABLE SALA(
+id_sala VARCHAR(5) PRIMARY KEY,
+id_etaj varchar(5),
+nr_locuri NUMBER(3)
+);
+
+INSERT INTO SALA (ID_SALA, ID_ETAJ, NR_LOCURI) 
+VALUES ('U1', 'A1_1', 3);
+INSERT INTO SALA (ID_SALA, ID_ETAJ, NR_LOCURI) 
+VALUES ('Ati1', 'A1_2', 15);
+INSERT INTO SALA (ID_SALA, ID_ETAJ, NR_LOCURI) 
+VALUES ('Ati2', 'A1_2', 20);
+INSERT INTO SALA (ID_SALA, ID_ETAJ, NR_LOCURI) 
+VALUES ('Oft1', 'A2_2', 4);
+INSERT INTO SALA (ID_SALA, ID_ETAJ, NR_LOCURI) 
+VALUES ('Nef1', 'B1_1', 2);
+INSERT INTO SALA (ID_SALA, ID_ETAJ, NR_LOCURI) 
+VALUES ('MI1', 'A1_3', 10);
+INSERT INTO SALA (ID_SALA, ID_ETAJ, NR_LOCURI) 
+VALUES ('MI2', 'A1_3', 7);
+INSERT INTO SALA (ID_SALA, ID_ETAJ, NR_LOCURI) 
+VALUES ('Mi3', 'A1_3', 1);
+INSERT INTO SALA (ID_SALA, ID_ETAJ, NR_LOCURI) 
+VALUES ('U2', 'A1_1', 2);
+
+--LEGATURI__________________________________________________________________________________
+ALTER TABLE DEPARTAMENT
+ADD CONSTRAINT leg_cladire_dept
+FOREIGN KEY (id_cladire) REFERENCES CLADIRE (id_cladire) ON DELETE SET NULL;
+
+ALTER TABLE ETAJ
+ADD CONSTRAINT leg_dept_etaj
+FOREIGN KEY (id_dept) REFERENCES DEPARTAMENT (id_dept) ON DELETE SET NULL;
+
+ALTER TABLE SALA
+ADD CONSTRAINT leg_etaj_sala
+FOREIGN KEY (id_etaj) REFERENCES ETAJ (id_etaj) ON DELETE SET NULL;
+
+--Angajat---------------------------------------------------------------------------------
+CREATE TABLE ANGAJAT (
+id_angajat NUMBER(5) PRIMARY KEY,
+id_dept VARCHAR(5),
+id_job VARCHAR(5),
+id_sala VARCHAR(5),
+manager_id NUMBER(5), 
+nume VARCHAR(10),
+prenume VARCHAR(20),
+oras VARCHAR(10),
+adresa VARCHAR(15)
+);
+
+INSERT INTO ANGAJAT (ID_ANGAJAT, ID_DEPT, ID_JOB, ID_SALA, MANAGER_ID, NUME, PRENUME, ORAS, ADRESA) 
+VALUES (1, 'U', 'Med', 'U1', NULL, 'Nelu', 'Constantin', 'Bucuresti', 'str. sarii');
+INSERT INTO ANGAJAT (ID_ANGAJAT, ID_DEPT, ID_JOB, ID_SALA, MANAGER_ID, NUME, PRENUME, ORAS, ADRESA) 
+VALUES (2, 'U', 'Asist', NULL, 1, 'Ion', 'Agripina', 'Cluj', 'str. Siret');
+INSERT INTO ANGAJAT (ID_ANGAJAT, ID_DEPT, ID_JOB, ID_SALA, MANAGER_ID, NUME, PRENUME, ORAS, ADRESA) 
+VALUES (3, 'MI', 'Med', NULL, 3, 'Maria', 'Andreea', 'Giurgiu', 'Str. Campaniei');
+INSERT INTO ANGAJAT (ID_ANGAJAT, ID_DEPT, ID_JOB, ID_SALA, MANAGER_ID, NUME, PRENUME, ORAS, ADRESA) 
+VALUES (4, 'MI', 'An', NULL, 3, 'Georgescu', 'Adrian', 'Bucuresti', 'Str. Proiect');
+INSERT INTO ANGAJAT (ID_ANGAJAT, ID_DEPT, ID_JOB, ID_SALA, MANAGER_ID, NUME, PRENUME, ORAS, ADRESA) 
+VALUES (5, 'MI', 'Ch', 'Mi3', NULL, 'Neculce', 'Marian', 'Bucuresti', 'Str Scanteii');
+INSERT INTO ANGAJAT (ID_ANGAJAT, ID_DEPT, ID_JOB, ID_SALA, MANAGER_ID, NUME, PRENUME, ORAS, ADRESA) 
+VALUES (6, 'OFT', 'Med', NULL, NULL, 'Stan', 'Maria', 'Bucuresti', 'str. Teilor');
+INSERT INTO ANGAJAT (ID_ANGAJAT, ID_DEPT, ID_JOB, ID_SALA, MANAGER_ID, NUME, PRENUME, ORAS, ADRESA) 
+VALUES (7, 'OFT', 'Asist', NULL, 6, 'Dinu', 'Alexandra', 'Giurgiu', 'str. Pietrelor');
+INSERT INTO ANGAJAT (ID_ANGAJAT, ID_DEPT, ID_JOB, ID_SALA, MANAGER_ID, NUME, PRENUME, ORAS, ADRESA) 
+VALUES (8, 'NEF', 'Med', 'Nef1', NULL, 'Stanescu', 'Paul', 'Pitesti', 'str. Valurilor');
+INSERT INTO ANGAJAT (ID_ANGAJAT, ID_DEPT, ID_JOB, ID_SALA, MANAGER_ID, NUME, PRENUME, ORAS, ADRESA) 
+VALUES (9, 'NEF', 'Asist', NULL, 8, 'Velicu', 'Cristina', 'Bucuresti', 'str. Sadoveanu');
+INSERT INTO ANGAJAT (ID_ANGAJAT, ID_DEPT, ID_JOB, ID_SALA, MANAGER_ID, NUME, PRENUME, ORAS, ADRESA) 
+VALUES (10, 'DERM', 'Med', NULL, NULL, 'Oprea', 'Luminita', 'Ploiesti', 'str. Unirii');
+INSERT INTO ANGAJAT (ID_ANGAJAT, ID_DEPT, ID_JOB, ID_SALA, MANAGER_ID, NUME, PRENUME, ORAS, ADRESA) 
+VALUES (11, 'DERM', 'Asist', NULL, 10, 'Oancea', 'Georgiana', 'Galati', 'str. Plopilor');
+INSERT INTO ANGAJAT (ID_ANGAJAT, ID_DEPT, ID_JOB, ID_SALA, MANAGER_ID, NUME, PRENUME, ORAS, ADRESA) 
+VALUES (12, 'ATI', 'Med', NULL, NULL, 'Udrea', 'Ileana', 'Iasi', 'str. Depozit');
+INSERT INTO ANGAJAT (ID_ANGAJAT, ID_DEPT, ID_JOB, ID_SALA, MANAGER_ID, NUME, PRENUME, ORAS, ADRESA) 
+VALUES (13, 'ATI', 'Med', NULL, 12, 'Mihail ', 'Constantin', 'Bucuresti', 'str. Florilor');
+INSERT INTO ANGAJAT (ID_ANGAJAT, ID_DEPT, ID_JOB, ID_SALA, MANAGER_ID, NUME, PRENUME, ORAS, ADRESA) 
+VALUES (14, 'ATI', 'Asist', NULL, 12, 'Manea', 'Thomas', 'Bucuresti', 'bd. Timisoara');
+
+--LEGATURI_______________________________________________________________________________
+ALTER TABLE ANGAJAT
+ADD CONSTRAINT leg_dept_angajat 
+FOREIGN KEY (id_dept) REFERENCES DEPARTAMENT (id_dept) ON DELETE SET NULL;
+
+
+ALTER TABLE DEPARTAMENT
+ADD CONSTRAINT leg_angajat_dept  
+FOREIGN KEY (manager_id) REFERENCES angajat(id_angajat) ON DELETE SET NULL;
+
+--JOB------------------------------------------------------------------------------
+CREATE TABLE JOB (
+id_job VARCHAR(5) PRIMARY KEY,
+titlu_job VARCHAR(15),
+salariu NUMBER(6),
+bonus NUMBER(5)
+);
+
+INSERT INTO JOB (ID_JOB, TITLU_JOB, SALARIU, BONUS) 
+VALUES ('Med', 'Medic Rezident', 5000, 1000);
+INSERT INTO JOB (ID_JOB, TITLU_JOB, SALARIU, BONUS) 
+VALUES ('Asist', 'Asistent', 3000, 500);
+INSERT INTO JOB (ID_JOB, TITLU_JOB, SALARIU, BONUS) 
+VALUES ('Sec', 'Agent sec.', 1500, 1500);
+INSERT INTO JOB (ID_JOB, TITLU_JOB, SALARIU, BONUS) 
+VALUES ('An', 'Anestezist', 7000, 4500);
+INSERT INTO JOB (ID_JOB, TITLU_JOB, SALARIU, BONUS) 
+VALUES ('Ch', 'Chirurg', 10000, 6000);
+
+--LEG_______________________________________
+ALTER TABLE Angajat
+ADD CONSTRAINT leg_angajat_job
+FOREIGN KEY (id_job) REFERENCES Job (id_job) ON DELETE SET NULL;
+
+--Diagnostic------------------------------------------------------------------------
+CREATE TABLE DIAGNOSTIC (
+id_diagnostic VARCHAR(10) PRIMARY KEY,
+id_pac VARCHAR(10),
+id_angajat NUMBER(5),
+data_diagnostic date default (sysdate),
+boala VARCHAR(20)
+);
+
+INSERT INTO DIAGNOSTIC (ID_DIAGNOSTIC, ID_PAC, ID_ANGAJAT, DATA_DIAGNOSTIC, BOALA) 
+VALUES ('frac', '1', 1, to_date('10-06-2020', 'DD-MM-YYYY'), 'Fractura');
+INSERT INTO DIAGNOSTIC (ID_DIAGNOSTIC, ID_PAC, ID_ANGAJAT, DATA_DIAGNOSTIC, BOALA) 
+VALUES ('ir', '2', 8, to_date('11-08-2020', 'DD-MM-YYYY'), 'Insuficienta Renala');
+INSERT INTO DIAGNOSTIC (ID_DIAGNOSTIC, ID_PAC, ID_ANGAJAT, DATA_DIAGNOSTIC, BOALA) 
+VALUES ('mio', '3', 6, to_date('14-03-21', 'DD-MM-YYYY'), 'miopie');
+INSERT INTO DIAGNOSTIC (ID_DIAGNOSTIC, ID_PAC, ID_ANGAJAT, DATA_DIAGNOSTIC, BOALA) 
+VALUES ('ast', '4', 6, to_date('19-11-19', 'DD-MM-YYYY'), 'astigmatism');
+INSERT INTO DIAGNOSTIC (ID_DIAGNOSTIC, ID_PAC, ID_ANGAJAT, DATA_DIAGNOSTIC, BOALA) 
+VALUES ('derm', '5', 10, NULL, 'dermatita');
+INSERT INTO DIAGNOSTIC (ID_DIAGNOSTIC, ID_PAC, ID_ANGAJAT, DATA_DIAGNOSTIC, BOALA) 
+VALUES ('traum', '6', 1, NULL, 'traumatim');
+INSERT INTO DIAGNOSTIC (ID_DIAGNOSTIC, ID_PAC, ID_ANGAJAT, DATA_DIAGNOSTIC, BOALA) 
+VALUES ('apend', '7', 3, NULL, 'apendicita acuta');
+INSERT INTO DIAGNOSTIC (ID_DIAGNOSTIC, ID_PAC, ID_ANGAJAT, DATA_DIAGNOSTIC, BOALA) 
+VALUES ('inf', '8', 1, to_date('03-03-2021', 'DD-MM-YYYY'), 'infectie');
+INSERT INTO DIAGNOSTIC (ID_DIAGNOSTIC, ID_PAC, ID_ANGAJAT, DATA_DIAGNOSTIC, BOALA) 
+VALUES ('sept', '9', 1, NULL, 'septicemie');
+INSERT INTO DIAGNOSTIC (ID_DIAGNOSTIC, ID_PAC, ID_ANGAJAT, DATA_DIAGNOSTIC, BOALA) 
+VALUES ('lit', '10', 8, to_date('01/09/2021', 'DD-MM-YYYY'), 'litiaza renala');
+INSERT INTO DIAGNOSTIC (ID_DIAGNOSTIC, ID_PAC, ID_ANGAJAT, DATA_DIAGNOSTIC, BOALA) 
+VALUES ('infa', '11', 13, to_date('05-07-2021', 'DD-MM-YYYY'), 'infarct');
+
+--LEG______________________________________________________________________________________________
+ALTER TABLE Diagnostic
+ADD CONSTRAINT leg_angajat_diagnostic
+FOREIGN KEY (id_angajat) REFERENCES ANGAJAT (id_angajat) ON DELETE SET NULL;
+
+--PACIENT-----------------------------------------------------------------
+CREATE TABLE PACIENT (
+id_pac number(10) PRIMARY KEY,
+id_diagnostic VARCHAR(10),
+--id_angajat NUMBER(5),
+id_sala VARCHAR(5),
+nume VARCHAR(10),
+prenume VARCHAR(20),
+oras VARCHAR(10),
+adresa VARCHAR(15)
+);
+
+--SECVENTA~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+CREATE SEQUENCE secventa
+start with 1
+increment by 1
+minvalue 1
+maxvalue 100000
+nocycle;
+
+--LEG_____________________________________________________
+ALTER TABLE Pacient
+ADD CONSTRAINT leg_diagnostic_pacient
+FOREIGN KEY (id_diagnostic) REFERENCES Diagnostic (id_diagnostic) ON DELETE SET NULL;
+
+ALTER TABLE PACIENT
+ADD CONSTRAINT leg_sala_pacient
+FOREIGN KEY (id_sala) REFERENCES SALA (id_sala) ON DELETE SET NULL;
+
+
+INSERT INTO PACIENT (ID_PAC, ID_DIAGNOSTIC, ID_SALA, NUME, PRENUME, ORAS, ADRESA) 
+VALUES (secventa.nextval, 'frac', 'U1', 'Ilioiu', 'Ana', 'Bucuresti', 'Str. Astra');
+INSERT INTO PACIENT (ID_PAC, ID_DIAGNOSTIC, ID_SALA, NUME, PRENUME, ORAS, ADRESA) 
+VALUES (secventa.nextval, 'traum', 'U1', 'Sambure', 'Costin', 'Cluj', 'Str. Jiului');
+INSERT INTO PACIENT (ID_PAC, ID_DIAGNOSTIC, ID_SALA, NUME, PRENUME, ORAS, ADRESA) 
+VALUES (secventa.nextval, 'mio', 'Oft1', 'Capsuna', 'Marian', 'Bucuresti', 'Str. Macesului');
+INSERT INTO PACIENT (ID_PAC, ID_DIAGNOSTIC, ID_SALA, NUME, PRENUME, ORAS, ADRESA) 
+VALUES (secventa.nextval, 'ir', 'Nef1', 'Marin', 'Andreea', 'Giurgiu', 'Str. Turcilor');
+INSERT INTO PACIENT (ID_PAC, ID_DIAGNOSTIC, ID_SALA, NUME, PRENUME, ORAS, ADRESA) 
+VALUES (secventa.nextval, 'ast', 'Oft1', 'Hodosan', 'Toma', 'Bucuresti', 'Str. Pierzaniei');
+INSERT INTO PACIENT (ID_PAC, ID_DIAGNOSTIC, ID_SALA, NUME, PRENUME, ORAS, ADRESA) 
+VALUES (secventa.nextval, 'ir', 'Nef1', 'Neculce', 'Elena', 'Bucuresti', 'Str. Crinului');
+INSERT INTO PACIENT (ID_PAC, ID_DIAGNOSTIC, ID_SALA, NUME, PRENUME, ORAS, ADRESA) 
+VALUES (secventa.nextval, 'traum', 'U1', 'Tomsa', 'Popa', 'Bucuresti', 'Str. Ploii');
+INSERT INTO PACIENT (ID_PAC, ID_DIAGNOSTIC, ID_SALA, NUME, PRENUME, ORAS, ADRESA) 
+VALUES (secventa.nextval, 'frac', 'U1', 'Nedelciu', 'Adriana', 'Iasi', 'Str. Castanelor');
+INSERT INTO PACIENT (ID_PAC, ID_DIAGNOSTIC, ID_SALA, NUME, PRENUME, ORAS, ADRESA) 
+VALUES (secventa.nextval, 'frac', 'U2', 'Dinu', 'Cosmin', 'Bucuresti', 'Str. Iasomiei');
+INSERT INTO PACIENT (ID_PAC, ID_DIAGNOSTIC, ID_SALA, NUME, PRENUME, ORAS, ADRESA) 
+VALUES (secventa.nextval, 'traum', 'U1', 'Apostol', 'Gherghe', 'Oradea', 'Str. Dudului');
+INSERT INTO PACIENT (ID_PAC, ID_DIAGNOSTIC, ID_SALA, NUME, PRENUME, ORAS, ADRESA) 
+VALUES (secventa.nextval, 'traum', 'U1', 'Badea', 'Marian', 'Bucuresti', 'Str. Cartilor');
+
+--TRATAMENT-------------------------------------------------------------------
+CREATE TABLE TRATAMENT (
+plan_tratament NUMBER(4) PRIMARY KEY,
+medicament VARCHAR(20),
+administrare VARCHAR(20),
+durata VARCHAR(20)
+);
+
+INSERT INTO TRATAMENT (PLAN_TRATAMENT, MEDICAMENT, ADMINISTRARE, DURATA) 
+VALUES (1, 'Ghips', 'imediata', '4 saptamani');
+INSERT INTO TRATAMENT (PLAN_TRATAMENT, MEDICAMENT, ADMINISTRARE, DURATA) 
+VALUES (2, 'dializa', NULL, 'nedeterminata');
+INSERT INTO TRATAMENT (PLAN_TRATAMENT, MEDICAMENT, ADMINISTRARE, DURATA) 
+VALUES (3, 'prescriptie ochelari', NULL, 'nedeterminata');
+INSERT INTO TRATAMENT (PLAN_TRATAMENT, MEDICAMENT, ADMINISTRARE, DURATA) 
+VALUES (4, 'prescriptie ochelari', NULL, 'nedeterminata');
+INSERT INTO TRATAMENT (PLAN_TRATAMENT, MEDICAMENT, ADMINISTRARE, DURATA) 
+VALUES (5, 'antibiotic', 'zilnica', '2 saptamani');
+INSERT INTO TRATAMENT (PLAN_TRATAMENT, MEDICAMENT, ADMINISTRARE, DURATA) 
+VALUES (6, 'Analgezic', 'zilnica', '1 saptamana');
+INSERT INTO TRATAMENT (PLAN_TRATAMENT, MEDICAMENT, ADMINISTRARE, DURATA) 
+VALUES (7,'operatie','imediata','2 zile');
+INSERT INtO TRATAMENT (PLAN_TRATAMENT, MEDICAMENT, ADMINISTRARE, DURATA) 
+VALUES (8,'antibiotice','zilnica','3 saptamani');
+INSERT INTO TRATAMENT (PLAN_TRATAMENT, MEDICAMENT, ADMINISTRARE, DURATA) 
+VALUES (9,'antibiotice','zilnica','3 saptamani');
+INSERT INTO TRATAMENT (PLAN_TRATAMENT, MEDICAMENT, ADMINISTRARE, DURATA) 
+VALUES (10,'operatie, tratament','imediata','1 saptamana');
+INSERT INTO TRATAMENT (PLAN_TRATAMENT, MEDICAMENT, ADMINISTRARE, DURATA) 
+VALUES (11,'anticoagulante','imediata','5 zile');
+
+--IMPLICA---------------------------------------------------------------------
+CREATE TABLE IMPLICA (
+id_diagnostic VARCHAR(10),
+plan_tratament NUMBER(4),
+CONSTRAINT PK_implica PRIMARY KEY (id_diagnostic, plan_tratament)
+);
+--LEG_________________________________________________________________________
+ALTER TABLE IMPLICA
+ADD CONSTRAINT leg_diagnostic_implica
+FOREIGN KEY (id_diagnostic) REFERENCES Diagnostic (id_diagnostic) ON DELETE SET NULL;
+
+--LEG_________________________________________________________________________________
+ALTER TABLE IMPLICA
+ADD CONSTRAINT leg_tratament_implica
+FOREIGN KEY (plan_tratament) REFERENCES TRATAMENT (plan_tratament) ON DELETE SET NULL;
+
+
+INSERT INTO IMPLICA (ID_DIAGNOSTIC, PLAN_TRATAMENT) 
+VALUES ('frac', 1);
+INSERT INTO IMPLICA (ID_DIAGNOSTIC, PLAN_TRATAMENT) 
+VALUES ('ir', 2);
+INSERT INTO IMPLICA (ID_DIAGNOSTIC, PLAN_TRATAMENT) 
+VALUES ('mio', 3);
+INSERT INTO IMPLICA (ID_DIAGNOSTIC, PLAN_TRATAMENT) 
+VALUES ('ast', 4);
+INSERT INTO IMPLICA (ID_DIAGNOSTIC, PLAN_TRATAMENT) 
+VALUES ('derm', 5);
+INSERT INTO IMPLICA (ID_DIAGNOSTIC, PLAN_TRATAMENT) 
+VALUES ('traum', 6);
+INSERT INTO IMPLICA (ID_DIAGNOSTIC, PLAN_TRATAMENT) 
+VALUES ('apend', 7);
+INSERT INTO IMPLICA (ID_DIAGNOSTIC, PLAN_TRATAMENT) 
+VALUES ('inf', 8);
+INSERT INTO IMPLICA (ID_DIAGNOSTIC, PLAN_TRATAMENT) 
+VALUES ('sept', 9);
+INSERT INTO IMPLICA (ID_DIAGNOSTIC, PLAN_TRATAMENT) 
+VALUES ('lit', 10);
+INSERT INTO IMPLICA (ID_DIAGNOSTIC, PLAN_TRATAMENT) 
+VALUES ('inf', 11);
+
+ALTER TABLE DEPARTAMENT
+DROP COLUMN id_angajat;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+-Cerinta 6-
+Rezolvati urmatoarea problema folosind un subprogram stocat:
+Retineti intr-o colectie (de tip vector) id-urile pacientilor ce urmeaza sa fie externati si intr-o alta
+colectie (de tip tabel imbricat), numele pacientilor.
+Stergeti din tabelul pacient pacientii ce au codurile stocate in colectiea de tip vector iar apoi
+afisati numele tuturor pacientilor folosind colectia corespunzatoare.
+*/
+
+
+CREATE OR REPLACE PROCEDURE c6 IS
+FARA_PACIENTI EXCEPTION;
+TYPE tip_cod IS VARRAY(10) OF pacient.id_pac%type;
+coduri_pacienti tip_cod := tip_cod(9,10);
+TYPE tip_nume IS TABLE OF pacient.nume%type;
+nume_pacienti tip_nume := tip_nume();
+
+BEGIN 
+FORALL i IN coduri_pacienti.FIRST..coduri_pacienti.LAST 
+DELETE FROM pacient 
+WHERE id_pac = coduri_pacienti(i); 
+
+Select nume bulk collect into nume_pacienti
+from pacient;
+
+IF nume_pacienti.count>0 THEN
+    FOR i IN 1..nume_pacienti.count LOOP
+        DBMS_OUTPUT.PUT_LINE (nume_pacienti(i));
+    END LOOP;
+ELSE 
+    RAISE FARA_PACIENTI;
+END IF;
+
+EXCEPTION
+WHEN FARA_PACIENTI THEN 
+   DBMS_OUTPUT.PUT_LINE ('Nu exita pacienti in baza de date!');
+END c6; 
+/
+
+BEGIN
+c6;
+END;
+/
+
+ROLLBACK;
+
+/*
+-Cerinta 7-
+Rezolvati urmatoarea problema folosind un subprogram stocat:
+Pentru fiecare job in parte, obtineti lista angajatilor (nume, prenume) care lucreaza pe job-ul respectiv.
+Folostiti un ciclu cursor!
+*/
+
+CREATE OR REPLACE PROCEDURE c7 IS
+CURSOR j IS SELECT id_job, titlu_job FROM job;
+CURSOR e(job_curent VARCHAR2) IS SELECT nume, prenume FROM angajat WHERE id_job = job_curent;
+v_nr NUMBER(2);
+BEGIN
+FOR i in j LOOP
+    EXIT WHEN j%notfound;
+    dbms_output.new_line;
+    DBMS_OUTPUT.PUT_LINE(i.titlu_job);
+    v_nr:=0;
+    for k in e(i.id_job) LOOP
+        DBMS_OUTPUT.PUT_LINE('Ang ' || k.nume || ' ' || k.prenume);
+        v_nr:=v_nr+1;
+    END LOOP;
+     IF v_nr = 0 THEN
+          DBMS_OUTPUT.PUT_LINE('Fara ang');
+        END IF;
+END LOOP;
+
+END c7;
+/
+
+BEGIN
+c7;
+END;
+/
+
+ROLLBACK;
+
+/*
+-Cerinta 8-
+Scrieti o functie care sa returneze id-ul pacientului care a fost tratat 
+de un angajat al carui id este dat;
+Tratati toate exceptiile care pot aparea!
+*/
+
+CREATE OR REPLACE FUNCTION c8 (v_id_ang angajat.id_angajat%type DEFAULT 13)
+RETURN pacient.id_pac%type 
+IS
+id pacient.id_pac%type;
+ANG_INEXISTENT EXCEPTION;
+TYPE tip_id IS TABLE OF angajat.id_angajat%type;
+lista_id_ang tip_id := tip_id();
+BEGIN
+
+select id_angajat bulk collect into lista_id_ang from angajat;
+IF lista_id_ang.EXISTS(v_id_ang) THEN
+
+SELECT p.id_pac into id
+FROM pacient p
+JOIN diagnostic d ON d.id_pac=p.id_pac
+JOIN angajat a ON a.id_angajat=d.id_angajat
+WHERE a.id_angajat=v_id_ang;
+
+RETURN id;
+
+ELSE
+RAISE ANG_INEXISTENT;
+END IF;
+
+
+EXCEPTION
+WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('Nu exista pacient tratat de doctorul dat.');
+WHEN TOO_MANY_ROWS THEN
+    DBMS_OUTPUT.PUT_LINE('Doctorul dat trateaza mai multi pacienti!');
+WHEN ANG_INEXISTENT THEN
+    DBMS_OUTPUT.PUT_LINE('Angajatul cu codul dat nu exista!!');
+
+END c8;
+/
+
+DECLARE
+v_rezultat pacient.id_pac%type;
+BEGIN
+v_rezultat:=c8(24);
+DBMS_OUTPUT.PUT_LINE('Pacientul tratat de doctorul dat are id-ul ' || v_rezultat);
+END;
+/
+
+/*
+-Cerinta 9-
+Scrieti o procedura care sa afiseze cu ajutorul pachetului DBMS Output id-ul etajului la nivelul caruia 
+are loc un anumit tratament (plan de tratament).
+Tratati exceptiile ce pot aparea!
+*/
+
+CREATE OR REPLACE PROCEDURE c9 (v_plan_trat tratament.plan_tratament%TYPE) IS
+v_id_etaj etaj.id_etaj%type;
+TYPE tip_tratament IS TABLE OF tratament.plan_tratament%type;
+lista_planuri_trat tip_tratament := tip_tratament();
+Plan_inexistent EXCEPTION;
+BEGIN
+
+SELECT plan_tratament BULK COLLECT INTO lista_planuri_trat from implica;
+IF lista_planuri_trat.EXISTS(v_plan_trat) THEN
+    SELECT e.id_etaj into v_id_etaj
+    FROM etaj e
+    JOIN sala s ON s.id_etaj=e.id_etaj
+    JOIN pacient p on s.id_sala=p.id_sala
+    JOIN diagnostic d ON d.id_pac=p.id_pac
+    JOIN implica i ON i.id_diagnostic=d.id_diagnostic
+    WHERE i.plan_tratament=v_plan_trat;
+    
+    DBMS_OUTPUT.PUT_LINE(v_id_etaj);
+
+ELSE
+    RAISE Plan_inexistent;
+END IF;
+
+EXCEPTION
+WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('Nu exista un etaj pentru tratamentul dat;');
+WHEN TOO_MANY_ROWS THEN
+    DBMS_OUTPUT.PUT_LINE('Tratamentul se poate realiza in cadrul a mai multe etaje');
+WHEN Plan_inexistent THEN
+    DBMS_OUTPUT.PUT_LINE('Planul de tratament dat nu exista!!');
+    
+END c9;
+/
+
+--OBSERVATIE : Procedura nu va intra pe exceptia too many rows sau no data found!
+
+BEGIN 
+c9(70);
+end;
+/
+
+/*
+Cerinta 10
+Definiti un trigger care sa permita externarea pacientilor (Delete in cadrul tabelului pacient)
+doar in intervalul orar 8:00-21:00, de luni pana vineri.
+*/
+CREATE OR REPLACE TRIGGER c10 
+BEFORE DELETE ON pacient
+BEGIN IF (TO_CHAR(SYSDATE,'D') = 1) OR (TO_CHAR(SYSDATE,'D') = 7)OR (TO_CHAR(SYSDATE,'HH24') NOT BETWEEN 8 AND 21) 
+THEN RAISE_APPLICATION_ERROR(-20001,'Pacientul nu poate fi externat inca!'); 
+END IF; 
+END; 
+/
+
+--Apelare declansator
+BEGIN
+DELETE FROM pacient 
+WHERE id_pac = 2;
+END; 
+/
+
+
+ROLLBACK;
+
+/*
+Cerinta 11
+Definiti un trigger pentru tabelul ETAJ care sa nu permita modificarea numarului de sali
+din cadrul acelui etaj.
+*/
+
+CREATE OR REPLACE TRIGGER c11
+BEFORE UPDATE OF nr_sali ON etaj
+FOR EACH ROW 
+BEGIN 
+IF (:NEW.nr_sali < :OLD.nr_sali) 
+THEN RAISE_APPLICATION_ERROR(-20002,'Numarul de sali nu poate fi modificat!!'); 
+END IF;
+END; 
+/ 
+
+UPDATE etaj 
+SET nr_sali = 4
+WHERE id_etaj like '%A1_1%'; 
+
+rollback;
+
+ /*
+ Cerinta 12
+ Definiti un trigger de tip DDL care sa nu permita stergerea tabelelor din baza de date.
+ Acest trigger va preveni pierderea accidentala a datelor.
+ */
+ 
+CREATE OR REPLACE TRIGGER c12
+BEFORE DROP ON DATABASE
+BEGIN 
+RAISE_APPLICATION_ERROR(-20003,'Nu puteti sterge tabelul!'); 
+END;
+/
+
+drop table pacient;
+
+DROP TRIGGER c12;
+
+/*
+Cerinta 13
+Definirea pachetului:
+*/
+
+
+CREATE OR REPLACE PACKAGE c13 IS
+PROCEDURE c6;
+PROCEDURE c7;
+FUNCTION c8 (v_id_ang angajat.id_angajat%type DEFAULT 13) RETURN pacient.id_pac%type;
+PROCEDURE c9 (v_plan_trat tratament.plan_tratament%TYPE);
+END c13;
+/
+
+CREATE OR REPLACE PACKAGE BODY c13 IS
+--------------------------------------------
+PROCEDURE c6 IS
+FARA_PACIENTI EXCEPTION;
+TYPE tip_cod IS VARRAY(10) OF pacient.id_pac%type;
+coduri_pacienti tip_cod := tip_cod(9,10);
+TYPE tip_nume IS TABLE OF pacient.nume%type;
+nume_pacienti tip_nume := tip_nume();
+
+BEGIN 
+FORALL i IN coduri_pacienti.FIRST..coduri_pacienti.LAST 
+DELETE FROM pacient 
+WHERE id_pac = coduri_pacienti(i); 
+
+Select nume bulk collect into nume_pacienti
+from pacient;
+
+IF nume_pacienti.count>0 THEN
+    FOR i IN 1..nume_pacienti.count LOOP
+        DBMS_OUTPUT.PUT_LINE (nume_pacienti(i));
+    END LOOP;
+ELSE 
+    RAISE FARA_PACIENTI;
+END IF;
+
+EXCEPTION
+WHEN FARA_PACIENTI THEN 
+   DBMS_OUTPUT.PUT_LINE ('Nu exita pacienti in baza de date!');
+END c6; 
+-------------------------------------------------------------------
+PROCEDURE c7 IS
+CURSOR j IS SELECT id_job, titlu_job FROM job;
+CURSOR e(job_curent VARCHAR2) IS SELECT nume, prenume FROM angajat WHERE id_job = job_curent;
+v_nr NUMBER(2);
+BEGIN
+FOR i in j LOOP
+    EXIT WHEN j%notfound;
+    dbms_output.new_line;
+    DBMS_OUTPUT.PUT_LINE(i.titlu_job);
+    v_nr:=0;
+    for k in e(i.id_job) LOOP
+        DBMS_OUTPUT.PUT_LINE('Ang ' || k.nume || ' ' || k.prenume);
+        v_nr:=v_nr+1;
+    END LOOP;
+     IF v_nr = 0 THEN
+          DBMS_OUTPUT.PUT_LINE('Fara ang');
+        END IF;
+END LOOP;
+
+END c7;
+---------------------------------------------------------------------
+FUNCTION c8 (v_id_ang angajat.id_angajat%type DEFAULT 13)
+RETURN pacient.id_pac%type 
+IS
+id pacient.id_pac%type;
+ANG_INEXISTENT EXCEPTION;
+TYPE tip_id IS TABLE OF angajat.id_angajat%type;
+lista_id_ang tip_id := tip_id();
+BEGIN
+
+select id_angajat bulk collect into lista_id_ang from angajat;
+IF lista_id_ang.EXISTS(v_id_ang) THEN
+
+SELECT p.id_pac into id
+FROM pacient p
+JOIN diagnostic d ON d.id_pac=p.id_pac
+JOIN angajat a ON a.id_angajat=d.id_angajat
+WHERE a.id_angajat=v_id_ang;
+
+RETURN id;
+
+ELSE
+RAISE ANG_INEXISTENT;
+END IF;
+
+
+EXCEPTION
+WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('Nu exista pacient tratat de doctorul dat.');
+WHEN TOO_MANY_ROWS THEN
+    DBMS_OUTPUT.PUT_LINE('Doctorul dat trateaza mai multi pacienti!');
+WHEN ANG_INEXISTENT THEN
+    DBMS_OUTPUT.PUT_LINE('Angajatul cu codul dat nu exista!!');
+
+END c8;
+-----------------------------------------------------------------------------------
+PROCEDURE c9 (v_plan_trat tratament.plan_tratament%TYPE) IS
+v_id_etaj etaj.id_etaj%type;
+TYPE tip_tratament IS TABLE OF tratament.plan_tratament%type;
+lista_planuri_trat tip_tratament := tip_tratament();
+Plan_inexistent EXCEPTION;
+BEGIN
+
+SELECT plan_tratament BULK COLLECT INTO lista_planuri_trat from implica;
+IF lista_planuri_trat.EXISTS(v_plan_trat) THEN
+    SELECT e.id_etaj into v_id_etaj
+    FROM etaj e
+    JOIN sala s ON s.id_etaj=e.id_etaj
+    JOIN pacient p on s.id_sala=p.id_sala
+    JOIN diagnostic d ON d.id_pac=p.id_pac
+    JOIN implica i ON i.id_diagnostic=d.id_diagnostic
+    WHERE i.plan_tratament=v_plan_trat;
+    
+    DBMS_OUTPUT.PUT_LINE(v_id_etaj);
+
+ELSE
+    RAISE Plan_inexistent;
+END IF;
+
+EXCEPTION
+WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('Nu exista un etaj pentru tratamentul dat;');
+WHEN TOO_MANY_ROWS THEN
+    DBMS_OUTPUT.PUT_LINE('Tratamentul se poate realiza in cadrul a mai multe etaje');
+WHEN Plan_inexistent THEN
+    DBMS_OUTPUT.PUT_LINE('Planul de tratament dat nu exista!!');
+    
+END c9;
+------------------------------------------------------------------------
+
+END c13;
+/
